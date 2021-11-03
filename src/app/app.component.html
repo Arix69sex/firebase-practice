@@ -1,0 +1,28 @@
+<div id="notLoggedInNavbar" class="w-full h-1/5 bg-soft-black flex flex-row z-10 absolute top-0">
+    <h1 class= "ml-10 mr-auto text-2xl text-gray-300 mt-5"><b>Firebase </b>Practice</h1>
+    <div class="mr-10 ml-auto mt-5">
+      <button class="w-24 h-10 text-lg bg-soft-grey xl:hover:bg-gray-700 text-gray-200 rounded-md transition-all duration-500 ease-linear mr-2.5" (click)="navigateToLogin()">
+        <b>Login</b>
+      </button>
+      <button class="w-24 h-10 text-lg bg-purple-accent xl:hover:bg-purple-400 text-gray-200 rounded-md transition-all duration-500 ease-linear ml-2.5" (click)="navigateToJoin()">
+        <b>Join</b>
+      </button>
+    </div>
+</div>
+<div id="loggedInNavbar" class="w-full h-1/5 bg-soft-black flex flex-row z-20 absolute top-0">
+  <h1 class= "ml-10 mr-auto text-2xl text-gray-300 mt-5"><b>Firebase </b>Practice</h1>
+  <div class="flex flex-row mr-10 ml-auto mt-5">
+    <button id="emailStringButton" class="w-auto h-10 text-lg bg-soft-grey xl:hover:bg-gray-700 text-gray-200 rounded-md transition-all duration-500 ease-linear mr-2.5 pl-4 pr-4" (click)="navigateToLogin()">
+    </button>
+    <button class="w-24 h-10 text-lg bg-purple-accent xl:hover:bg-purple-400 text-gray-200 rounded-md transition-all duration-500 ease-linear ml-2.5" (click)="navigateToHome()">
+      <b>New Note</b>
+    </button>
+    <button class="w-24 h-10 text-lg bg-purple-accent xl:hover:bg-purple-400 text-gray-200 rounded-md transition-all duration-500 ease-linear ml-2.5" (click)="navigateToHistory()">
+      <b>History</b>
+    </button>
+    <button class="w-24 h-10 text-lg bg-purple-accent xl:hover:bg-purple-400 text-gray-200 rounded-md transition-all duration-500 ease-linear ml-2.5" (click)="logout()">
+      <b>Logout</b>
+    </button>
+  </div>
+</div>
+<router-outlet></router-outlet>
