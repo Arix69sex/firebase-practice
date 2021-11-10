@@ -5,10 +5,10 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 ## Stuff to Install
 
 ### Angular
-Run 'nmp install angular'
+Run `nmp install angular`
 
 ### TailwindCSS
-Run 'npm install -D tailwindcss'
+Run `npm install -D tailwindcss`
 
 ## Development server
 
