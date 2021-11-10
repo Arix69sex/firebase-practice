@@ -28,4 +28,8 @@ export class NoteService {
     localStorage.setItem('rate-type', JSON.stringify(this.rateType));
     JSON.parse(<string>localStorage.getItem('rate-type'));
   }
+
+  clear() {
+    localStorage.removeItem('rate-type');
+  }
 }

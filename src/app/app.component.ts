@@ -19,6 +19,7 @@ export class AppComponent implements OnInit , AfterViewInit{
 
   ngOnInit(): void {
     let type = JSON.parse(<string>localStorage.getItem('rate-type'));
+    console.log(type)
     let options = document.getElementById("rate-options");
     if (type == "Tasa Efectiva"){
       // @ts-ignore
@@ -46,9 +47,11 @@ export class AppComponent implements OnInit , AfterViewInit{
     // @ts-ignore
     let value = select.options[select.selectedIndex].value;
     console.log(value)
-    if (value == "Tasa Efectiva"){
+    if (value == "0") {
+      console.log("Setting to effective rate")
       this.noteService.setToEffective()
     } else {
+      console.log("Setting to nominal rate")
       this.noteService.setToNominal()
     }
     location.reload()
@@ -82,6 +85,7 @@ export class AppComponent implements OnInit , AfterViewInit{
 
   logout() {
     this.authService.SignOut();
+    this.noteService.clear();
     this.setNavbars();
     this.router.navigate(['/login/']).then(() => location.reload());
   }
