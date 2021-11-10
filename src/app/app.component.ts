@@ -2,6 +2,7 @@ import {AfterContentInit, AfterViewInit, Component, Input, OnChanges, OnInit, Si
 import {Router} from "@angular/router";
 import {AuthServiceService} from "./services/auth-service.service";
 import {Observable} from "rxjs";
+import {NoteService} from "./services/note.service";
 
 @Component({
   selector: 'app-root',
@@ -12,10 +13,20 @@ export class AppComponent implements OnInit , AfterViewInit{
   title = 'firebase-practice';
 
   constructor(private router: Router,
-              private authService: AuthServiceService) {
+              private authService: AuthServiceService,
+              private noteService: NoteService) {
   }
 
   ngOnInit(): void {
+    let type = JSON.parse(<string>localStorage.getItem('rate-type'));
+    let options = document.getElementById("rate-options");
+    if (type == "Tasa Efectiva"){
+      // @ts-ignore
+      options.value = "0"
+    } else {
+      // @ts-ignore
+      options.value = "1"
+    }
     this.setNavbars()
   }
 
@@ -28,6 +39,19 @@ export class AppComponent implements OnInit , AfterViewInit{
     let user = JSON.parse(<any>localStorage.getItem('user'));
     // @ts-ignore
     emailStringButton.innerText = user.email;
+  }
+
+  setRate() {
+    let select = document.getElementById("rate-options")
+    // @ts-ignore
+    let value = select.options[select.selectedIndex].value;
+    console.log(value)
+    if (value == "Tasa Efectiva"){
+      this.noteService.setToEffective()
+    } else {
+      this.noteService.setToNominal()
+    }
+    location.reload()
   }
 
   setNavbars() {
