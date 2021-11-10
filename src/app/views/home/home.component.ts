@@ -4,6 +4,7 @@ import {forkJoin, Observable} from "rxjs";
 import {User} from "../../model/user";
 import {NoteService} from "../../services/note.service";
 import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {Expense} from "../../model/expense";
 
 @Component({
   selector: 'app-home',
@@ -15,6 +16,8 @@ export class HomeComponent implements OnInit, AfterContentInit, OnChanges {
   @Input() currentView: number = 1;
   @Input() rateType: String = this.noteService.getRateType()
   rateTypeChange: Observable<String> = new Observable<String>()
+  initialExpenses: Array<Expense> = [];
+  finalExpenses: Array<Expense> = [];
 
   firstForm: FormGroup = this.formBuilder.group({
     email: ['', [Validators.email, Validators.required, Validators.minLength(6)]],
@@ -26,8 +29,9 @@ export class HomeComponent implements OnInit, AfterContentInit, OnChanges {
     password: ['', [Validators.required, Validators.minLength(8)]],
   });
   finalExpensesForm: FormGroup = this.formBuilder.group({
-    email: ['', [Validators.email, Validators.required, Validators.minLength(6)]],
-    password: ['', [Validators.required, Validators.minLength(8)]],
+    motive: ['', [Validators.required]],
+    amount: ['', [Validators.required]],
+    valueType: ['', [Validators.required]]
   });
 
   constructor(private authService: AuthServiceService,
@@ -82,7 +86,26 @@ export class HomeComponent implements OnInit, AfterContentInit, OnChanges {
   }
 
   submitValues(){
+  }
 
+  addFinalExpense() {
+    console.log(this.finalExpensesForm)
+    if (this.finalExpensesForm.invalid){
+      console.log("Invalid expense form")
+    }
+    else {
+      let newExpense:  Expense = new Expense();
+      newExpense.amount = this.finalExpensesForm.value.amount
+      newExpense.valueType = this.finalExpensesForm.value.valueType
+      newExpense.motive = this.finalExpensesForm.value.motive
+      newExpense.uid = JSON.parse(<string>localStorage.getItem('user')).uid;
+      this.finalExpenses.push(newExpense)
+    }
+
+  }
+
+  deleteFinalExpense(id: number) {
+    this.finalExpenses.splice(id, 1);
   }
 
   setView() {
