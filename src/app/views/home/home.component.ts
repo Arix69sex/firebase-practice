@@ -25,8 +25,9 @@ export class HomeComponent implements OnInit, AfterContentInit, OnChanges {
   });
 
   initialExpensesForm: FormGroup = this.formBuilder.group({
-    email: ['', [Validators.email, Validators.required, Validators.minLength(6)]],
-    password: ['', [Validators.required, Validators.minLength(8)]],
+    motive: ['', [Validators.required]],
+    amount: ['', [Validators.required]],
+    valueType: ['', [Validators.required]]
   });
   finalExpensesForm: FormGroup = this.formBuilder.group({
     motive: ['', [Validators.required]],
@@ -88,6 +89,22 @@ export class HomeComponent implements OnInit, AfterContentInit, OnChanges {
   submitValues(){
   }
 
+  addInitialExpenses() {
+    console.log(this.initialExpensesForm)
+    if (this.initialExpensesForm.invalid){
+      console.log("Invalid expense form")
+    }
+    else {
+      let newExpense:  Expense = new Expense();
+      newExpense.amount = this.initialExpensesForm.value.amount
+      newExpense.valueType = this.initialExpensesForm.value.valueType
+      newExpense.motive = this.initialExpensesForm.value.motive
+      newExpense.uid = JSON.parse(<string>localStorage.getItem('user')).uid;
+      this.initialExpenses.push(newExpense)
+    }
+
+  }
+
   addFinalExpense() {
     console.log(this.finalExpensesForm)
     if (this.finalExpensesForm.invalid){
@@ -102,6 +119,18 @@ export class HomeComponent implements OnInit, AfterContentInit, OnChanges {
       this.finalExpenses.push(newExpense)
     }
 
+  }
+
+  clearInitialExpenses() {
+    this.initialExpenses = []
+  }
+
+  clearFinalExpenses() {
+    this.finalExpenses = []
+  }
+
+  deleteInitialExpense(id: number) {
+    this.initialExpenses.splice(id, 1);
   }
 
   deleteFinalExpense(id: number) {
