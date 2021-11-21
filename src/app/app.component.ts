@@ -19,9 +19,18 @@ export class AppComponent implements OnInit , AfterViewInit{
 
   ngOnInit(): void {
     let type = JSON.parse(<string>localStorage.getItem('rate-type'));
-    console.log(type)
     let options = document.getElementById("rate-options");
     if (type == "Tasa Efectiva"){
+      // @ts-ignore
+      options.value = "0"
+    } else {
+      // @ts-ignore
+      options.value = "1"
+    }
+
+    type = JSON.parse(<string>localStorage.getItem('currency-type'));
+    options = document.getElementById("currency-options")
+    if (type == "Soles"){
       // @ts-ignore
       options.value = "0"
     } else {

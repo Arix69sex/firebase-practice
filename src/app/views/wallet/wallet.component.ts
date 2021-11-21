@@ -23,6 +23,7 @@ export class WalletComponent implements OnInit {
 
   @Input() currentView: number = 1;
   @Input() rateType: String = this.noteService.getRateType()
+  @Input() currencyType: String = this.noteService.getCurrencyType()
   rateTypeChange: Observable<String> = new Observable<String>()
   initialExpenses: Array<Expense> = [];
   finalExpenses: Array<Expense> = [];
@@ -128,71 +129,80 @@ export class WalletComponent implements OnInit {
     let tempLetra = new Note()
     let tempArray: Note[] = []
     if (this.checkNoteFormInvalid() && this.checkBaseFormsInvalid()){
-      console.log("At least one form is invalid.")
+      alert("Alguno de los formularios es inválido. \nNo te olvides de llenar todos los campos.")
     }
     else {
+      let dateDesc = ""
+      if (this.rateType == "Tasa Efectiva"){
+        dateDesc = this.effectiveForm.getRawValue().fechaDescuento
+      }
+      else dateDesc = this.nominalForm.getRawValue().fechaDescuento
       tempLetra.id = JSON.parse(<string>localStorage.getItem('user')).uid
       tempLetra.fechaGiro = this.firstForm.getRawValue().fechaGiro
       tempLetra.fechaVencimiento = this.firstForm.getRawValue().fechaVencimiento
       tempLetra.valorNominal = this.firstForm.getRawValue().valorNominal
       tempLetra.retencion = this.firstForm.getRawValue().retencion
-      console.log(tempLetra)
-      // Guardar letras en db
-      this.firestore.collection("letras").add({
-          fechaGiro: this.firstForm.getRawValue().fechaGiro,
-          fechaVencimiento: this.firstForm.getRawValue().fechaVencimiento,
-          valorNominal: this.firstForm.getRawValue().valorNominal,
-          retencion: this.firstForm.getRawValue().retencion,
-          uid: JSON.parse(<string>localStorage.getItem('user')).uid
-        }
-      ).then(r => {
-        console.log(r.id)
-        letraId = r.id
-        tempLetra.id = r.id
-        // Guardar tasa en db
-        if (this.rateType == "Tasa Efectiva") {
-          this.noteService.setPlazoAnualValue(Number(this.effectiveForm.getRawValue().nDias))
-          this.firestore.collection("tasas").add({
-              fecha_descuento: this.effectiveForm.getRawValue().fechaDescuento,
-              fecha_vencimiento: this.effectiveForm.getRawValue().fechaDescuento,
-              n_dias: this.effectiveForm.getRawValue().nDias,
-              plazo_tasa: this.effectiveForm.getRawValue().plazoTasa,
-              tasa_efectiva: this.effectiveForm.getRawValue().tasaEfectiva,
-              tipo: this.rateType,
-              letra_id: letraId
-            }
-          ).then(() => {
-            tempArray.push(tempLetra)
-            console.log(tempArray)
-            this.data.push(tempArray)
-            console.log(this.data)
-            this.saveExpenses(letraId)
-            this.loadResults()
-          })
-        }
-        else {
-          this.noteService.setPlazoAnualValue(Number(this.nominalForm.getRawValue().nDias))
-          this.firestore.collection("tasas").add({
-              fecha_descuento: this.nominalForm.getRawValue().fechaDescuento,
-              fecha_vencimiento: this.nominalForm.getRawValue().fechaDescuento,
-              n_dias: this.nominalForm.getRawValue().nDias,
-              plazo_tasa: this.nominalForm.getRawValue().plazoTasa,
-              periodo_capital: this.nominalForm.getRawValue().periodoCapital,
-              tasa_nominal: this.nominalForm.getRawValue().tasaNominal,
-              tipo: this.rateType,
-              letra_id: letraId
-            }
-          ).then(() => {
-            tempArray.push(tempLetra)
-            console.log(tempArray)
-            this.data.push(tempArray)
-            console.log(this.data)
-            this.saveExpenses(letraId)
-            this.loadResults()
-          })
-        }
+      if (!this.calculatorService.datesValid(tempLetra.fechaGiro, dateDesc, tempLetra.fechaVencimiento)){
+        alert("Rango de fechas es invalido. Recuerda: \nFecha de Giro < Fecha de Descuento < Fecha Vencimiento")
+      }
+      else {
+        // Guardar letras en db
+        this.firestore.collection("letras").add({
+            fechaGiro: this.firstForm.getRawValue().fechaGiro,
+            fechaVencimiento: this.firstForm.getRawValue().fechaVencimiento,
+            valorNominal: this.firstForm.getRawValue().valorNominal,
+            retencion: this.firstForm.getRawValue().retencion,
+            uid: JSON.parse(<string>localStorage.getItem('user')).uid
+          }
+        ).then(r => {
+          console.log(r.id)
+          letraId = r.id
+          tempLetra.id = r.id
+          // Guardar tasa en db
+          if (this.rateType == "Tasa Efectiva") {
+            this.noteService.setPlazoAnualValue(Number(this.effectiveForm.getRawValue().nDias))
+            this.firestore.collection("tasas").add({
+                fecha_descuento: this.effectiveForm.getRawValue().fechaDescuento,
+                fecha_vencimiento: this.effectiveForm.getRawValue().fechaDescuento,
+                n_dias: this.effectiveForm.getRawValue().nDias,
+                plazo_tasa: this.effectiveForm.getRawValue().plazoTasa,
+                tasa_efectiva: this.effectiveForm.getRawValue().tasaEfectiva,
+                tipo: this.rateType,
+                letra_id: letraId
+              }
+            ).then(() => {
+              tempArray.push(tempLetra)
+              console.log(tempArray)
+              this.data.push(tempArray)
+              console.log(this.data)
+              this.saveExpenses(letraId)
+              this.loadResults()
+            })
+          }
+          else {
+            this.noteService.setPlazoAnualValue(Number(this.nominalForm.getRawValue().nDias))
+            this.firestore.collection("tasas").add({
+                fecha_descuento: this.nominalForm.getRawValue().fechaDescuento,
+                fecha_vencimiento: this.nominalForm.getRawValue().fechaDescuento,
+                n_dias: this.nominalForm.getRawValue().nDias,
+                plazo_tasa: this.nominalForm.getRawValue().plazoTasa,
+                periodo_capital: this.nominalForm.getRawValue().periodoCapital,
+                tasa_nominal: this.nominalForm.getRawValue().tasaNominal,
+                tipo: this.rateType,
+                letra_id: letraId
+              }
+            ).then(() => {
+              tempArray.push(tempLetra)
+              console.log(tempArray)
+              this.data.push(tempArray)
+              console.log(this.data)
+              this.saveExpenses(letraId)
+              this.loadResults()
+            })
+          }
 
-      });
+        });
+      }
     }
 
   }
@@ -239,13 +249,13 @@ export class WalletComponent implements OnInit {
       this.tep = this.calculatorService.getTasaPeriodo(this.diasTrans, this.nominalForm.getRawValue().plazoTasa, this.nominalForm.getRawValue().periodoCapital,this.nominalForm.getRawValue().tasaNominal)
     }
     this.d = this.calculatorService.getTasaDescontada(this.tep)
-    this.descuento = this.calculatorService.getDescuento(this.firstForm.getRawValue().valorNominal, this.tep)
+    this.descuento = this.calculatorService.getDescuento(this.firstForm.getRawValue().valorNominal, this.d)
     this.retencion = Number((this.firstForm.getRawValue().retencion).toFixed(2))
     this.totalIni = this.calculatorService.getTotalCostosIni(this.initialExpenses, this.firstForm.getRawValue().valorNominal)
-    this.valorNeto = this.calculatorService.getValorNeto(this.firstForm.getRawValue().valorNominal, this.tep)
-    this.valorRecibido = this.calculatorService.getValorRecibido(this.firstForm.getRawValue().valorNominal, this.initialExpenses, this.tep, this.retencion)
+    this.valorNeto = this.calculatorService.getValorNeto(this.firstForm.getRawValue().valorNominal, this.d)
+    this.valorRecibido = this.calculatorService.getValorRecibido(this.firstForm.getRawValue().valorNominal, this.initialExpenses, this.d, this.retencion)
     this.totalFin = this.calculatorService.getTotalCostosFin(this.finalExpenses, this.firstForm.getRawValue().valorNominal)
-    this.valorEntregado = this.calculatorService.getValorEntregado(this.firstForm.getRawValue().valorNominal, this.finalExpenses, this.tep, this.retencion, 0)
+    this.valorEntregado = this.calculatorService.getValorEntregado(this.firstForm.getRawValue().valorNominal, this.finalExpenses, this.d, this.retencion, 0)
     this.tcea = this.calculatorService.getTCEP(this.valorEntregado, this.valorRecibido, this.noteService.getPlazoValue("Anual"), this.diasTrans)
     this.data[this.data.length-1].push(this.diasTrans)
     this.data[this.data.length-1].push(this.tep)
@@ -435,7 +445,7 @@ export class WalletComponent implements OnInit {
         }else{
           if (this.currentView == 4) {
             if (this.checkBaseFormsInvalid()) {
-              console.log("Forms are invalid")
+              alert("Alguno de los formularios es inválido. \nNo te olvides de llenar todos los campos.")
               this.changeViewValue(-1)
             } else {
               console.log("Enabling fourth view...")

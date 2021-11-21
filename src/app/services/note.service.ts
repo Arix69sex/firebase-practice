@@ -48,7 +48,6 @@ export class NoteService {
     this.firestore.collection('letras').doc(note.id).delete().then(r => this.loadNotesFromDb());
   }
 
-
   loadNotesFromDb() {
     this.letras = []
     let uid = JSON.parse(<string>localStorage.getItem('user')).uid
@@ -174,19 +173,20 @@ export class NoteService {
   }
 
   getCurrencyType(): String {
-    if (JSON.parse(<string>localStorage.getItem('currency-type')) == null) this.setToSoles()
+    if (JSON.parse(<string>localStorage.getItem('currency-type')) == undefined) this.setToSoles()
+    console.log(JSON.parse(<string>localStorage.getItem('currency-type')))
     return JSON.parse(<string>localStorage.getItem('currency-type'));
   }
 
   setToDollars() {
     this.currencyType = "Dollars"
-    localStorage.setItem('currency-type', JSON.stringify(this.rateType));
+    localStorage.setItem('currency-type', JSON.stringify(this.currencyType));
     JSON.parse(<string>localStorage.getItem('currency-type'));
   }
 
   setToSoles() {
     this.currencyType = "Soles"
-    localStorage.setItem('currency-type', JSON.stringify(this.rateType));
+    localStorage.setItem('currency-type', JSON.stringify(this.currencyType));
     JSON.parse(<string>localStorage.getItem('currency-type'));
   }
 

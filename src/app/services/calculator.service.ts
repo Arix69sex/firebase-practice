@@ -24,6 +24,14 @@ export class CalculatorService {
     return ( dateVenc.getTime() - dateDesc.getTime() ) / (1000 * 3600 * 24)
   }
 
+  datesValid(fechaGiro: string, fechaDescuento: string, fechaVencimiento: string): boolean {
+    let dateGiro = new Date(fechaGiro)
+    let dateDesc = new Date(fechaDescuento)
+    let dateVenc = new Date(fechaVencimiento)
+
+    return (dateVenc.getTime() > dateGiro.getTime()) && (dateDesc.getTime() > dateGiro.getTime()) && (dateVenc.getTime() > dateDesc.getTime())
+  }
+
   getTasaPeriodo(dias: number, plazoTasa: string, periodoTasa: string, tasa: number): number {
     let n = 0
     let m = 0
@@ -44,9 +52,9 @@ export class CalculatorService {
     return Number(((TEP/(1 + TEP))*100).toFixed(7))
   }
 
-  getDescuento(valorNominal: number, TEP: number) {
-    TEP = TEP/100
-    return Number((valorNominal * this.getTasaDescontada(TEP)))
+  getDescuento(valorNominal: number, d: number) {
+    d = d/100
+    return Number((valorNominal * d))
   }
 
   getTotalCostosIni(costosIniciales: Array<Expense>, valorNominal: number ){
@@ -75,16 +83,16 @@ export class CalculatorService {
     return Number(finTotal)
   }
 
-  getValorNeto(valorNominal: number, TEP: number) {
-    return Number((valorNominal - this.getDescuento(valorNominal, TEP)).toFixed(2))
+  getValorNeto(valorNominal: number, d: number) {
+    return Number((valorNominal - this.getDescuento(valorNominal, d)))
   }
 
-  getValorRecibido(valorNominal: number, costosIniciales: Array<Expense>, TEP: number ,retencion: number) {
-    return Number((this.getValorNeto(valorNominal, TEP) - this.getTotalCostosIni(costosIniciales, valorNominal) - retencion).toFixed(2))
+  getValorRecibido(valorNominal: number, costosIniciales: Array<Expense>, d: number ,retencion: number) {
+    return Number((this.getValorNeto(valorNominal, d) - this.getTotalCostosIni(costosIniciales, valorNominal) - retencion))
   }
 
-  getValorEntregado(valorNominal: number, costosFinales: Array<Expense>, TEP: number, retencion: number, remuneracion: number) {
-    return Number((valorNominal + this.getTotalCostosFin(costosFinales, valorNominal) - retencion - remuneracion).toFixed(2))
+  getValorEntregado(valorNominal: number, costosFinales: Array<Expense>, d: number, retencion: number, remuneracion: number) {
+    return Number((valorNominal + this.getTotalCostosFin(costosFinales, valorNominal) - retencion - remuneracion))
   }
 
   getTCEP(entregado: number, recibido: number, diasTCEP:number, dias: number ) {
