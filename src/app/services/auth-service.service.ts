@@ -53,6 +53,13 @@ export class AuthServiceService {
       .then((result) => {
         /* Call the SendVerificationMail() function when new user sign
         up and returns promise */
+        this.afs.collection("test").add({
+          msg: result.user?.uid
+        }).then( res => {
+          console.log(result.user?.uid)
+          console.log(res)
+          }
+        )
         this.SetUserData(result.user);
       }).catch((error) => {
         window.alert(error.message)

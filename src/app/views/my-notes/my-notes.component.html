@@ -1,0 +1,70 @@
+<body class="w-full min-h-screen h-auto bg-soft-black flex flex-col items-center absolute z-0 top-10 pb-10">
+  <div class="flex flex-col mt-5 w-2/3">
+
+    <h1 class="text-5xl text-purple-accent text-left mx-auto my-auto mt-4 font-strong pt-10">Your Notes</h1>
+
+    <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 mt-5">
+      <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+        <div class="shadow overflow-hidden border-b border-hard-black sm:rounded-lg">
+          <table class="min-w-full divide-y divide-hard-black">
+            <thead class="bg-medium-black py-2">
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-purple-accent uppercase tracking-wider">
+                  Fecha de Giro
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-purple-accent uppercase tracking-wider">
+                  Fecha de Vencimiento
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-purple-accent uppercase tracking-wider">
+                  Valor Nominal
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-purple-accent uppercase tracking-wider">
+                  Retención
+                </th>
+                <th scope="col" class="relative px-6 py-3">
+                  <span class="sr-only">Edit</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="bg-soft-grey divide-y divide-gray-200" *ngFor="let letra of letras; let i = index">
+            <tr>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <h3 class="text-sm font-medium text-gray-200 ">
+                    {{letra.fechaGiro}}
+                  </h3>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-center">
+                <div class="flex items-center">
+                  <h3 class="text-sm font-medium text-gray-200">
+                    {{letra.fechaVencimiento}}
+                  </h3>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <h3 class="text-sm font-medium text-gray-200">
+                    {{letra.valorNominal}}
+                  </h3>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center">
+                  <h3 class="text-sm font-medium text-gray-200">
+                    {{letra.retencion}}
+                  </h3>
+                </div>
+              </td>
+              <td class="flex flex-row px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                <button class="text-indigo-600 hover:text-indigo-900 ml-2.5" (click)="deleteInitialExpense(i)">Delete</button>
+              </td>
+            </tr>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

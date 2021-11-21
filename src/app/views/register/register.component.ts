@@ -27,7 +27,7 @@ export class RegisterComponent implements OnInit {
       return;
     }
     else {
-      this.authService.SignUp(this.joinForm.getRawValue().email, this.joinForm.getRawValue().password).then(r => null);
+      this.authService.SignUp(this.joinForm.getRawValue().email, this.joinForm.getRawValue().password).then(r => location.reload());
     }
   }
 }

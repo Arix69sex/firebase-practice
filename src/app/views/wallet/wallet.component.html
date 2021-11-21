@@ -1,63 +1,5 @@
-<div class="w-full min-h-screen h-auto bg-soft-black ml-auto mr-auto flex justify-center items-center">
+<div class="w-full min-h-screen h-auto bg-soft-black ml-auto mr-auto flex justify-center items-center flex flex-col">
 
-  <!-- First panel -->
-  <div id="first-view" class="w-3/6 h-auto rounded-xl bg-medium-black shadow-lg flex flex-col justify-center items-center">
-
-    <div class="w-full h-1/4 bg-soft-grey rounded-t-xl flex flex-row justify-center text-center mt-auto mb-auto items-center py-4">
-      <h1 class="text-purple-accent text-4xl font-light">
-        <b>Datos de la Letra</b>
-      </h1>
-    </div>
-
-    <form [formGroup]="firstForm" class="w-full flex flex-col justify-center items-center py-8">
-      <div class="w-3/4 flex flex-row items-center ml-2.5 my-4">
-        <h3 class="text-gray-200 text-xl w-1/3">
-          Fecha de Giro
-        </h3>
-        <input  class="w-4/5 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl"
-                type="date"
-                formControlName="fechaGiro"
-                required>
-      </div>
-
-      <div class="w-3/4 flex flex-row items-center ml-2.5 my-4">
-        <h3 class="text-gray-200 text-xl w-1/3">
-          Fecha de Vencimiento
-        </h3>
-        <input  class="w-4/5 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl"
-                type="date"
-                formControlName="fechaVencimiento"
-                required>
-
-      </div>
-
-      <div class="w-3/4 flex flex-row items-center ml-2.5 my-4">
-        <h3 class="text-gray-200 text-xl w-1/3">
-          Valor Nominal
-        </h3>
-        <input  class="w-4/5 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl"
-                formControlName="valorNominal"
-                type="number"
-                required>
-
-      </div>
-
-      <div class="w-3/4 flex flex-row items-center ml-2.5 my-4">
-        <h3 class="text-gray-200 text-xl w-1/3">
-          Retención
-        </h3>
-        <input  class="w-4/5 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl"
-                formControlName="retencion"
-                type="number"
-                required>
-      </div>
-
-      <button class="w-32 h-14 text-lg bg-hard-purple xl:hover:bg-purple-400 text-gray-200 rounded-md transition-all duration-500 ease-linear ml-auto mr-16 mt-5" (click)="changeViewValue(1)">
-        <b>Next</b>
-      </button>
-    </form>
-
-  </div>
 
   <!-- Second panel -->
   <div id="second-view" class="w-3/6 h-auto rounded-xl bg-medium-black shadow-lg flex flex-col justify-center items-center">
@@ -120,16 +62,13 @@
           Fecha de Descuento
         </h3>
         <input id="date" class="w-auto bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl"
-                type="date"
-                formControlName="fechaDescuento"
-                required>
+               type="date"
+               formControlName="fechaDescuento"
+               required>
       </div>
 
       <div class="flex flex-row mr-16">
-        <button class="w-32 h-14 text-lg bg-hard-purple xl:hover:bg-purple-400 text-gray-200 rounded-md transition-all duration-500 ease-linear mt-5 mr-5 ml-auto" (click)="changeViewValue(-1)">
-          <b>Return</b>
-        </button>
-        <button class="w-32 h-14 text-lg bg-hard-purple xl:hover:bg-purple-400 text-gray-200 rounded-md transition-all duration-500 ease-linear mt-5 mr-16" (click)="changeViewValue(1)">
+        <button class="w-32 h-14 text-lg bg-hard-purple xl:hover:bg-purple-400 text-gray-200 rounded-md transition-all duration-500 ease-linear ml-auto mt-5" (click)="changeViewValue(1)">
           <b>Next</b>
         </button>
       </div>
@@ -391,35 +330,35 @@
           <div class="shadow overflow-hidden border-b border-hard-black sm:rounded-lg">
             <table class="w-3/4 max-w-3/4 divide-y divide-hard-black">
               <thead class="bg-medium-black">
-                <tr>
-                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">
-                    Motivo
-                  </th>
-                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">
-                    Amount
-                  </th>
-                  <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">
-                    Action
-                  </th>
-                </tr>
+              <tr>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">
+                  Motivo
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">
+                  Amount
+                </th>
+                <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-200 uppercase tracking-wider">
+                  Action
+                </th>
+              </tr>
               </thead>
               <tbody class="bg-soft-grey divide-y divide-gray-200" *ngFor="let expense of finalExpenses; let i = index">
-                <tr>
-                  <td class="px-6 py-4 whitespace-nowrap">
-                    <div class="flex items-center">
-                      <h3 class="text-sm font-medium text-gray-200">
-                        {{expense.motive}}
-                      </h3>
-                    </div>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-center">
-                    <h3 class="text-sm text-gray-200" *ngIf="expense.valueType == 'Efectivo'">${{expense.amount}}</h3>
-                    <h3 class="text-sm text-gray-200" *ngIf="expense.valueType == 'Porcentaje'">{{expense.amount}}%</h3>
-                  </td>
-                  <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
-                    <a href="#" class="text-indigo-600 hover:text-indigo-900" (click)="deleteFinalExpense(i)">Delete</a>
-                  </td>
-                </tr>
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap">
+                  <div class="flex items-center">
+                    <h3 class="text-sm font-medium text-gray-200">
+                      {{expense.motive}}
+                    </h3>
+                  </div>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center">
+                  <h3 class="text-sm text-gray-200" *ngIf="expense.valueType == 'Efectivo'">${{expense.amount}}</h3>
+                  <h3 class="text-sm text-gray-200" *ngIf="expense.valueType == 'Porcentaje'">{{expense.amount}}%</h3>
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                  <a href="#" class="text-indigo-600 hover:text-indigo-900" (click)="deleteFinalExpense(i)">Delete</a>
+                </td>
+              </tr>
 
               </tbody>
             </table>
@@ -430,8 +369,8 @@
         <button class="w-32 h-14 text-lg bg-hard-purple xl:hover:bg-purple-400 text-gray-200 rounded-md transition-all duration-500 ease-linear mt-5 mr-5" (click)="changeViewValue(-1)">
           <b>Return</b>
         </button>
-        <button class="w-32 h-14 text-lg bg-hard-purple xl:hover:bg-purple-400 text-gray-200 rounded-md transition-all duration-500 ease-linear mt-5" (click)="submitValues()">
-          <b>Confirm</b>
+        <button class="w-32 h-14 text-lg bg-hard-purple xl:hover:bg-purple-400 text-gray-200 rounded-md transition-all duration-500 ease-linear mt-5" (click)="changeViewValue(1)">
+          <b>Next</b>
         </button>
       </div>
 
@@ -439,129 +378,284 @@
 
   </div>
 
-  <!-- Success panel -->
-  <div id="results-view" class="w-3/4 h-auto rounded-xl bg-medium-black shadow-lg flex flex-col justify-center items-center">
-    <div class="w-full h-1/4 bg-soft-grey rounded-t-xl flex flex-row justify-center text-center mt-auto mb-auto items-center py-4">
-      <h1 class="text-purple-accent text-4xl font-light">
-        <b>Resultados</b>
-      </h1>
-    </div>
+  <div class="w-full flex flex-col justify-center items-center">
+    <!-- Carteras panel -->
+    <div id="first-view" class="w-3/6 flex flex-col justify-center items-center pt-10">
+      <!-- First panel -->
+      <div class="w-full h-auto rounded-xl bg-medium-black shadow-lg flex flex-col mt-26">
 
-    <div class="w-full flex flex-row justify-center items-center py-4">
-      <div class="w-1/2 flex flex-col justify-center items-center">
-
-        <div class="w-3/4 flex flex-row items-center ml-2.5 my-2">
-          <h3 class="text-gray-200 text-xl w-3/6 text-center">
-            Tasa Efectiva Anual
-          </h3>
-          <h3  class="w-3/6 h-10 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl ml-2.5 py-2 text-center">
-            {{this.tea | number:'1.7-7'}}%
-          </h3>
+        <div class="w-full h-1/4 bg-soft-grey rounded-t-xl flex flex-row justify-center text-center mt-auto mb-auto items-center py-4">
+          <h1 class="text-purple-accent text-4xl font-light">
+            <b>Datos de la Letra</b>
+          </h1>
         </div>
 
-        <div class="w-3/4 flex flex-row items-center ml-2.5 my-2">
-          <h3 class="text-gray-200 text-xl w-3/6 text-center">
-            Número de días trancurridos
-          </h3>
-          <h3  class="w-3/6 h-10 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl ml-2.5 py-2 text-center">
-            {{this.diasTrans}}
-          </h3>
-        </div>
+        <form [formGroup]="firstForm" class="w-full flex flex-col justify-center items-center py-8">
+          <div class="w-3/4 flex flex-row items-center ml-2.5 my-4">
+            <h3 class="text-gray-200 text-xl w-1/3">
+              Fecha de Giro
+            </h3>
+            <input  class="w-4/5 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl"
+                    type="date"
+                    formControlName="fechaGiro"
+                    required>
+          </div>
 
-        <div class="w-3/4 flex flex-row items-center ml-2.5 my-2">
-          <h3 class="text-gray-200 text-xl w-3/6 text-center">
-            Tasa Efectiva a {{this.diasTrans}} días
-          </h3>
-          <h3  class="w-3/6 h-10 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl ml-2.5 py-2 text-center">
-            {{this.tep | number:'1.7-7'}}%
-          </h3>
-        </div>
+          <div class="w-3/4 flex flex-row items-center ml-2.5 my-4">
+            <h3 class="text-gray-200 text-xl w-1/3">
+              Fecha de Vencimiento
+            </h3>
+            <input  class="w-4/5 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl"
+                    type="date"
+                    formControlName="fechaVencimiento"
+                    required>
 
-        <div class="w-3/4 flex flex-row items-center ml-2.5 my-2">
-          <h3 class="text-gray-200 text-xl w-3/6 text-center">
-            Tasa Descontada a {{this.diasTrans}} días
-          </h3>
-          <h3  class="w-3/6 h-10 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl ml-2.5 py-2 text-center">
-            {{this.d | number:'1.7-7'}}%
-          </h3>
-        </div>
+          </div>
 
-        <div class="w-3/4 flex flex-row items-center ml-2.5 my-2">
-          <h3 class="text-gray-200 text-xl w-3/6 text-center">
-            Descuento por {{this.diasTrans}} días
-          </h3>
-          <h3  class="w-3/6 h-10 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl ml-2.5 py-2 text-center">
-            {{this.descuento | number:'1.2-2'}}
-          </h3>
-        </div>
+          <div class="w-3/4 flex flex-row items-center ml-2.5 my-4">
+            <h3 class="text-gray-200 text-xl w-1/3">
+              Valor Nominal
+            </h3>
+            <input  class="w-4/5 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl"
+                    formControlName="valorNominal"
+                    type="number"
+                    required>
 
-        <div class="w-3/4 flex flex-row items-center ml-2.5 my-2">
-          <h3 class="text-gray-200 text-xl w-3/6 text-center">
-            Retención
-          </h3>
-          <h3  class="w-3/6 h-10 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl ml-2.5 py-2 text-center">
-            {{this.retencion | number:'1.2-2'}}
-          </h3>
-        </div>
+          </div>
+
+          <div class="w-3/4 flex flex-row items-center ml-2.5 my-4">
+            <h3 class="text-gray-200 text-xl w-1/3">
+              Retención
+            </h3>
+            <input  class="w-4/5 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl"
+                    formControlName="retencion"
+                    type="number"
+                    required>
+          </div>
+
+          <button class="w-32 h-14 text-lg bg-hard-purple xl:hover:bg-purple-400 text-gray-200 rounded-md transition-all duration-500 ease-linear ml-auto mr-16 mt-5" (click)="submitValues()">
+            <b>Confirm</b>
+          </button>
+        </form>
+
       </div>
 
-      <div class="w-1/2 flex flex-col justify-center items-center">
-
+    </div>
+    <!-- Results panel -->
+    <div id="results-view" class="w-5/6 h-auto rounded-xl bg-medium-black shadow-lg flex flex-col mt-10 justify-center items-center">
+      <div class="w-full h-1/4 bg-soft-grey rounded-t-xl flex flex-col justify-center text-center mt-auto mb-auto flex items-center py-4">
+        <h1 class="text-purple-accent text-4xl font-light">
+          <b>Resultados</b>
+        </h1>
+      </div>
+      <div class="w-full flex flex-col justify-center items-center py-4">
         <div class="w-3/4 flex flex-row items-center ml-2.5 my-2">
           <h3 class="text-gray-200 text-xl w-3/6 text-center">
-            Costos Iniciales Totales
+            Valor Total a Recibir por la Cartera
           </h3>
-          <h3  class="w-3/6 h-10 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl ml-2.5 py-2 text-center">
-            {{this.totalIni | number:'1.2-2'}}
+          <h3  class="w-4/12 h-10 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl ml-2.5 py-2 text-center">
+            {{this.totalValorRecibido | number:'1.2-2'}}
           </h3>
         </div>
 
         <div class="w-3/4 flex flex-row items-center ml-2.5 my-2">
           <h3 class="text-gray-200 text-xl w-3/6 text-center">
-           Valor Neto
+            Tasa de Coste Efectiva Anual de la Cartera
           </h3>
-          <h3  class="w-3/6 h-10 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl ml-2.5 py-2 text-center">
-            {{this.valorNeto | number:'1.2-2'}}
-          </h3>
-        </div>
-
-        <div class="w-3/4 flex flex-row items-center ml-2.5 my-2">
-          <h3 class="text-gray-200 text-xl w-3/6 text-center">
-            Valor Total a Recibir
-          </h3>
-          <h3  class="w-3/6 h-10 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl ml-2.5 py-2 text-center">
-            {{this.valorRecibido | number:'1.2-2'}}
-          </h3>
-        </div>
-
-        <div class="w-3/4 flex flex-row items-center ml-2.5 my-2">
-          <h3 class="text-gray-200 text-xl w-3/6 text-center">
-            Costos Finales Totales
-          </h3>
-          <h3  class="w-3/6 h-10 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl ml-2.5 py-2 text-center">
-            {{this.totalFin | number:'1.2-2'}}
-          </h3>
-        </div>
-
-        <div class="w-3/4 flex flex-row items-center ml-2.5 my-2">
-          <h3 class="text-gray-200 text-xl w-3/6 text-center">
-            Valor Total a Entregar
-          </h3>
-          <h3  class="w-3/6 h-10 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl ml-2.5 py-2 text-center">
-            {{this.valorEntregado | number:'1.2-2'}}
-          </h3>
-        </div>
-
-        <div class="w-3/4 flex flex-row items-center ml-2.5 my-2">
-          <h3 class="text-gray-200 text-xl w-3/6 text-center">
-            Tasa de Coste Efectiva Anual
-          </h3>
-          <h3  class="w-3/6 h-10 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl ml-2.5 py-2 text-center">
-            {{this.tcea | number:'1.7-7'}}%
+          <h3  class="w-4/12 h-10 bg-hard-black border-none rounded-md text-gray-300 focus:ring-hard-purple text-xl ml-2.5 py-2 text-center">
+            {{this.totalTCEA | number:'1.7-7'}}%
           </h3>
         </div>
       </div>
     </div>
+    <!-- Notes panel -->
+    <div id="notes-view" class="w-5/6 h-auto bg-soft-black flex flex-col items-center mt-10 justify-center items-center pb-20">
+      <div class="flex flex-col mt-5">
+        <div class="-my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 mt-5">
+          <div class="py-2 align-middle inline-block min-w-full sm:px-6 lg:px-8">
+            <div class="shadow overflow-hidden border-b border-hard-black sm:rounded-lg">
+              <table class="min-w-full divide-y divide-hard-black">
+                <thead class="bg-medium-black py-2">
+                <tr>
+                  <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-purple-accent uppercase tracking-wider">
+                    Fecha de Giro
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-purple-accent uppercase tracking-wider">
+                    Valor Nominal
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-purple-accent uppercase tracking-wider">
+                    Fecha de Vencimiento
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-purple-accent uppercase tracking-wider">
+                    Retención
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-purple-accent uppercase tracking-wider">
+                    Dias
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-purple-accent uppercase tracking-wider">
+                    Tasa %
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-purple-accent uppercase tracking-wider">
+                    d %
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-purple-accent uppercase tracking-wider">
+                    Descuento
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-purple-accent uppercase tracking-wider">
+                    Coste Inicial
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-purple-accent uppercase tracking-wider">
+                    Coste Final
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-purple-accent uppercase tracking-wider">
+                    Val. Neto
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-purple-accent uppercase tracking-wider">
+                    Val. Rec
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-purple-accent uppercase tracking-wider">
+                    Val. Ent
+                  </th>
+                  <th scope="col" class="px-6 py-3 text-left text-sm font-medium text-purple-accent uppercase tracking-wider">
+                    TCEA %
+                  </th>
+                  <th scope="col" class="relative px-6 py-3">
+                    <span class="sr-only">Edit</span>
+                  </th>
+                </tr>
+                </thead>
 
+                <tbody class="bg-soft-grey divide-y divide-gray-200" *ngFor="let element of data; let i = index">
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <h3 class="text-sm font-medium text-gray-200 ">
+                        {{element[0].fechaGiro}}
+                      </h3>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-center">
+                    <div class="flex items-center">
+                      <h3 class="text-sm font-medium text-gray-200">
+                        {{element[0].valorNominal | number:'1.2-2'}}
+                      </h3>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <h3 class="text-sm font-medium text-gray-200">
+                        {{element[0].fechaVencimiento}}
+                      </h3>
+                    </div>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <h3 class="text-sm font-medium text-gray-200">
+                        {{element[0].retencion | number:'1.2-2'}}
+                      </h3>
+                    </div>
+                  </td>
+                  <!-- Número de dias -->
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <h3 class="text-sm font-medium text-gray-200">
+                        {{element[1]}}
+                      </h3>
+                    </div>
+                  </td>
+
+                  <!-- TEP -->
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <h3 class="text-sm font-medium text-gray-200">
+                        {{element[2] | number:'1.7-7'}}%
+                      </h3>
+                    </div>
+                  </td>
+
+                  <!-- d -->
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <h3 class="text-sm font-medium text-gray-200">
+                        {{element[3] | number:'1.7-7'}}%
+                      </h3>
+                    </div>
+                  </td>
+
+                  <!-- Descuento -->
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <h3 class="text-sm font-medium text-gray-200">
+                        {{element[4] | number:'1.2-2'}}
+                      </h3>
+                    </div>
+                  </td>
+
+                  <!-- Costos Totales Iniciales -->
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <h3 class="text-sm font-medium text-gray-200">
+                        {{element[5] | number:'1.2-2'}}
+                      </h3>
+                    </div>
+                  </td>
+
+                  <!-- Costos Totales Finales -->
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <h3 class="text-sm font-medium text-gray-200">
+                        {{element[6] | number:'1.2-2'}}
+                      </h3>
+                    </div>
+                  </td>
+
+                  <!-- Valor Neto -->
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <h3 class="text-sm font-medium text-gray-200">
+                        {{element[7] | number:'1.2-2'}}
+                      </h3>
+                    </div>
+                  </td>
+
+                  <!-- Valor Recibido -->
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <h3 class="text-sm font-medium text-gray-200">
+                        {{element[8] | number:'1.2-2'}}
+                      </h3>
+                    </div>
+                  </td>
+
+                  <!-- Valor Entregado -->
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <h3 class="text-sm font-medium text-gray-200">
+                        {{element[9] | number:'1.2-2'}}
+                      </h3>
+                    </div>
+                  </td>
+
+                  <!-- TCEA -->
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <div class="flex items-center">
+                      <h3 class="text-sm font-medium text-gray-200">
+                        {{element[10] | number:'1.7-7'}}%
+                      </h3>
+                    </div>
+                  </td>
+                  <td class="flex flex-row px-6 py-4 whitespace-nowrap text-center text-sm font-medium">
+                    <button class="text-indigo-600 hover:text-indigo-900 ml-2.5" (click)="deleteElement(i)">Delete</button>
+                  </td>
+                </tr>
+
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
+
 </div>

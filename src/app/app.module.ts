@@ -10,7 +10,9 @@ import {AngularFireModule} from "@angular/fire/compat";
 import {AngularFirestoreModule} from "@angular/fire/compat/firestore";
 import {environment} from "../environments/environment";
 import {ReactiveFormsModule} from "@angular/forms";
-import { HistoryComponent } from './views/history/history.component';
+import { MyNotesComponent } from './views/my-notes/my-notes.component';
+import { NoteDetailComponent } from './views/note-detail/note-detail.component';
+import { WalletComponent } from './views/wallet/wallet.component';
 
 @NgModule({
   declarations: [
@@ -18,7 +20,9 @@ import { HistoryComponent } from './views/history/history.component';
     LoginComponent,
     RegisterComponent,
     HomeComponent,
-    HistoryComponent
+    MyNotesComponent,
+    NoteDetailComponent,
+    WalletComponent
   ],
     imports: [
         BrowserModule,

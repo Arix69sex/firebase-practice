@@ -1,20 +1,25 @@
-import {AfterContentInit, Component, Input, OnChanges, OnInit, SimpleChanges} from '@angular/core';
-import {AuthServiceService} from "../../services/auth-service.service";
-import {forkJoin, Observable, range} from "rxjs";
-import {User} from "../../model/user";
-import {NoteService} from "../../services/note.service";
-import {Form, FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {Component, Input, OnInit, SimpleChanges} from '@angular/core';
+import {Observable} from "rxjs";
 import {Expense} from "../../model/expense";
+import {FormBuilder, FormGroup, Validators} from "@angular/forms";
+import {AuthServiceService} from "../../services/auth-service.service";
+import {NoteService} from "../../services/note.service";
 import {AngularFirestore} from "@angular/fire/compat/firestore";
-import {DatePipe} from "@angular/common";
 import {CalculatorService} from "../../services/calculator.service";
+import {Note} from "../../model/note";
+import * as constants from "constants";
+import {assertNotNull} from "@angular/compiler/src/output/output_ast";
 
 @Component({
-  selector: 'app-home',
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  selector: 'app-wallet',
+  templateUrl: './wallet.component.html',
+  styleUrls: ['./wallet.component.css']
 })
-export class HomeComponent implements OnInit, AfterContentInit, OnChanges {
+export class WalletComponent implements OnInit {
+
+  data: Array<any> = []
+  totalValorRecibido: number = 0
+  totalTCEA: number = 0
 
   @Input() currentView: number = 1;
   @Input() rateType: String = this.noteService.getRateType()
@@ -40,14 +45,12 @@ export class HomeComponent implements OnInit, AfterContentInit, OnChanges {
     valorNominal: ['', [Validators.required]],
     retencion: ['', [Validators.required,]],
   });
-
   effectiveForm: FormGroup = this.formBuilder.group({
     nDias: ['', [Validators.required]],
     plazoTasa: ['', [Validators.required]],
     tasaEfectiva: ['', [Validators.required]],
     fechaDescuento: ['', [Validators.required,]],
   });
-
   nominalForm: FormGroup = this.formBuilder.group({
     nDias: ['', [Validators.required]],
     plazoTasa: ['', [Validators.required]],
@@ -55,7 +58,6 @@ export class HomeComponent implements OnInit, AfterContentInit, OnChanges {
     periodoCapital: ['', [Validators.required,]],
     fechaDescuento: ['', [Validators.required,]],
   });
-
   initialExpensesForm: FormGroup = this.formBuilder.group({
     motive: ['', [Validators.required]],
     amount: ['', [Validators.required]],
@@ -81,6 +83,7 @@ export class HomeComponent implements OnInit, AfterContentInit, OnChanges {
   }
 
   ngOnInit(): void {
+    this.testing()
     this.rateType = this.noteService.getRateType()
     console.log(this.rateType)
     this.currentView = 1;
@@ -93,11 +96,6 @@ export class HomeComponent implements OnInit, AfterContentInit, OnChanges {
   }
 
   changeViewValue(n: number){
-    console.log(this.firstForm)
-    if(this.rateType == "Tasa Efectiva"){
-      console.log(this.effectiveForm)
-    }else console.log(this.nominalForm)
-
     if (this.currentView + n < 7 || this.currentView + n < 1){
       this.currentView += n;
     }
@@ -119,19 +117,26 @@ export class HomeComponent implements OnInit, AfterContentInit, OnChanges {
       // @ts-ignore
       effectiveView.style.display = "block"
     }else {
-        console.log("Enabling nominal-type view...")
-        // @ts-ignore
-        nominalView.style.display = "block"
+      console.log("Enabling nominal-type view...")
+      // @ts-ignore
+      nominalView.style.display = "block"
     }
   }
 
   submitValues(){
     let letraId = "";
-
-    if (this.firstForm.invalid && (this.effectiveForm.invalid || this.nominalForm.invalid)){
+    let tempLetra = new Note()
+    let tempArray: Note[] = []
+    if (this.checkNoteFormInvalid() && this.checkBaseFormsInvalid()){
       console.log("At least one form is invalid.")
     }
     else {
+      tempLetra.id = JSON.parse(<string>localStorage.getItem('user')).uid
+      tempLetra.fechaGiro = this.firstForm.getRawValue().fechaGiro
+      tempLetra.fechaVencimiento = this.firstForm.getRawValue().fechaVencimiento
+      tempLetra.valorNominal = this.firstForm.getRawValue().valorNominal
+      tempLetra.retencion = this.firstForm.getRawValue().retencion
+      console.log(tempLetra)
       // Guardar letras en db
       this.firestore.collection("letras").add({
           fechaGiro: this.firstForm.getRawValue().fechaGiro,
@@ -143,8 +148,10 @@ export class HomeComponent implements OnInit, AfterContentInit, OnChanges {
       ).then(r => {
         console.log(r.id)
         letraId = r.id
+        tempLetra.id = r.id
         // Guardar tasa en db
         if (this.rateType == "Tasa Efectiva") {
+          this.noteService.setPlazoAnualValue(Number(this.effectiveForm.getRawValue().nDias))
           this.firestore.collection("tasas").add({
               fecha_descuento: this.effectiveForm.getRawValue().fechaDescuento,
               fecha_vencimiento: this.effectiveForm.getRawValue().fechaDescuento,
@@ -155,11 +162,16 @@ export class HomeComponent implements OnInit, AfterContentInit, OnChanges {
               letra_id: letraId
             }
           ).then(() => {
+            tempArray.push(tempLetra)
+            console.log(tempArray)
+            this.data.push(tempArray)
+            console.log(this.data)
             this.saveExpenses(letraId)
             this.loadResults()
-            this.changeViewValue(1)})
+          })
         }
         else {
+          this.noteService.setPlazoAnualValue(Number(this.nominalForm.getRawValue().nDias))
           this.firestore.collection("tasas").add({
               fecha_descuento: this.nominalForm.getRawValue().fechaDescuento,
               fecha_vencimiento: this.nominalForm.getRawValue().fechaDescuento,
@@ -171,9 +183,12 @@ export class HomeComponent implements OnInit, AfterContentInit, OnChanges {
               letra_id: letraId
             }
           ).then(() => {
+            tempArray.push(tempLetra)
+            console.log(tempArray)
+            this.data.push(tempArray)
+            console.log(this.data)
             this.saveExpenses(letraId)
             this.loadResults()
-            this.changeViewValue(1)
           })
         }
 
@@ -205,17 +220,22 @@ export class HomeComponent implements OnInit, AfterContentInit, OnChanges {
     }
   }
 
+  checkBaseFormsInvalid() {
+    return (this.effectiveForm.invalid && this.nominalForm.invalid)
+  }
+
+  checkNoteFormInvalid() {
+    return this.firstForm.invalid
+  }
+
   loadResults() {
-    let diasAño = 0
     if (this.rateType == "Tasa Efectiva"){
-      diasAño = Number(this.effectiveForm.getRawValue().nDias)
       this.diasTrans = this.calculatorService.getDiasTranscurridos(this.effectiveForm.getRawValue().fechaDescuento, this.firstForm.getRawValue().fechaVencimiento)
-      this.tea = this.calculatorService.getTasaPeriodo(diasAño, this.effectiveForm.getRawValue().plazoTasa, this.effectiveForm.getRawValue().periodoCapital, this.effectiveForm.getRawValue().tasaEfectiva)
+      this.tea = this.calculatorService.getTasaPeriodo(this.noteService.getPlazoValue("Anual"), this.effectiveForm.getRawValue().plazoTasa, this.effectiveForm.getRawValue().periodoCapital, this.effectiveForm.getRawValue().tasaEfectiva)
       this.tep = this.calculatorService.getTasaPeriodo(this.diasTrans, this.effectiveForm.getRawValue().plazoTasa, this.effectiveForm.getRawValue().periodoCapital,this.effectiveForm.getRawValue().tasaEfectiva)
     } else {
-      diasAño = Number(this.nominalForm.getRawValue().nDias)
       this.diasTrans = this.calculatorService.getDiasTranscurridos(this.nominalForm.getRawValue().fechaDescuento, this.firstForm.getRawValue().fechaVencimiento)
-      this.tea = this.calculatorService.getTasaPeriodo(diasAño, this.nominalForm.getRawValue().plazoTasa, this.nominalForm.getRawValue().periodoCapital, this.nominalForm.getRawValue().tasaNominal)
+      this.tea = this.calculatorService.getTasaPeriodo(this.noteService.getPlazoValue("Anual"), this.nominalForm.getRawValue().plazoTasa, this.nominalForm.getRawValue().periodoCapital, this.nominalForm.getRawValue().tasaNominal)
       this.tep = this.calculatorService.getTasaPeriodo(this.diasTrans, this.nominalForm.getRawValue().plazoTasa, this.nominalForm.getRawValue().periodoCapital,this.nominalForm.getRawValue().tasaNominal)
     }
     this.d = this.calculatorService.getTasaDescontada(this.tep)
@@ -226,7 +246,89 @@ export class HomeComponent implements OnInit, AfterContentInit, OnChanges {
     this.valorRecibido = this.calculatorService.getValorRecibido(this.firstForm.getRawValue().valorNominal, this.initialExpenses, this.tep, this.retencion)
     this.totalFin = this.calculatorService.getTotalCostosFin(this.finalExpenses, this.firstForm.getRawValue().valorNominal)
     this.valorEntregado = this.calculatorService.getValorEntregado(this.firstForm.getRawValue().valorNominal, this.finalExpenses, this.tep, this.retencion, 0)
-    this.tcea = this.calculatorService.getTCEP(this.valorEntregado, this.valorRecibido, diasAño, this.diasTrans)
+    this.tcea = this.calculatorService.getTCEP(this.valorEntregado, this.valorRecibido, this.noteService.getPlazoValue("Anual"), this.diasTrans)
+    this.data[this.data.length-1].push(this.diasTrans)
+    this.data[this.data.length-1].push(this.tep)
+    this.data[this.data.length-1].push(this.d)
+    this.data[this.data.length-1].push(this.descuento)
+    this.data[this.data.length-1].push(this.totalIni)
+    this.data[this.data.length-1].push(this.totalFin)
+    this.data[this.data.length-1].push(this.valorNeto)
+    this.data[this.data.length-1].push(this.valorRecibido)
+    this.data[this.data.length-1].push(this.valorEntregado)
+    this.data[this.data.length-1].push(this.tcea)
+    this.loadResultadosCartera()
+    this.enableNotesView()
+  }
+
+  xirr(transactions: any) {
+    const { xirr } = require('node-irr')
+    const { convertRate } = require('node-irr')
+    let data = []
+    for (let i = 0; i < transactions.length; i++){
+      data.push({
+        amount: transactions[i][0],
+        date: transactions[i][1]})
+    }
+    console.log(data)
+    let rate = xirr(data).rate
+    return convertRate(rate, this.noteService.getPlazoValue("Anual"))*100
+  }
+
+  testing(){
+    console.log(this.formatDate("11-27-2021"))
+    const { xirr } = require('node-irr')
+    const { convertRate } = require('node-irr')
+    let data = [
+      // currently accepted formats for strings:
+      // YYYYMMDD, YYYY-MM-DD, YYYY/MM/DD
+      { amount: 139839.35, date: '20211113' },
+      { amount: -70000, date: '20211127' },
+      { amount: -70000, date: '20211127' },
+    ]
+    for (let i = 0; i < 6; i++){
+      data.push({
+        amount: data[i].amount,
+        date: data[i].date})
+    }
+    let rate = xirr(data).rate
+    console.log(data)
+    return convertRate(rate, this.noteService.getPlazoValue("Anual"))
+  }
+
+  formatDate(date: string) {
+    let d = new Date(date),
+      month = '' + (d.getMonth() + 1),
+      day = '' + d.getDate(),
+      year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('');
+  }
+
+  loadResultadosCartera() {
+    let transactions = []
+    this.totalTCEA = 0
+    this.totalValorRecibido = 0
+    let totalValorEntregado = 0
+    for (let i = 0; i < this.data.length; i++){
+      console.log(this.data[i][8])
+      this.totalValorRecibido += this.data[i][8]
+      totalValorEntregado += this.data[i][9]
+    }
+
+    if (this.rateType == "Tasa Efectiva"){
+      transactions.push( [this.totalValorRecibido, this.formatDate(this.effectiveForm.getRawValue().fechaDescuento)] )
+    }else transactions.push([this.totalValorRecibido, this.formatDate(this.nominalForm.getRawValue().fechaDescuento) ])
+
+    for (let i = 0; i < this.data.length; i++){
+      transactions.push([-this.data[i][9], this.formatDate(this.data[i][0].fechaVencimiento)])
+    }
+    console.log(transactions)
+
+    this.totalTCEA = this.xirr(transactions)
 
   }
 
@@ -278,12 +380,31 @@ export class HomeComponent implements OnInit, AfterContentInit, OnChanges {
     this.finalExpenses.splice(id, 1);
   }
 
+  deleteElement(id: number) {
+    this.noteService.deleteNote(this.data[id][0])
+    this.data.splice(id, 1);
+    this.loadResultadosCartera()
+  }
+
+  enableNotesView() {
+    let firstView = document.getElementById("first-view")
+    let resultsView = document.getElementById("results-view")
+    let notesView = document.getElementById("notes-view")
+    // @ts-ignore
+    firstView.style.paddingTop = "8rem"
+    // @ts-ignore
+    notesView.style.display = "block"
+    // @ts-ignore
+    resultsView.style.display = "block"
+  }
+
   setView() {
     let firstView = document.getElementById("first-view")
     let secondView = document.getElementById("second-view")
     let thirdView = document.getElementById("third-view")
     let fourthView = document.getElementById("fourth-view")
     let resultsView = document.getElementById("results-view")
+    let notesView = document.getElementById("notes-view")
     // @ts-ignore
     firstView.style.display = "none"
     // @ts-ignore
@@ -294,34 +415,39 @@ export class HomeComponent implements OnInit, AfterContentInit, OnChanges {
     fourthView.style.display = "none"
     // @ts-ignore
     resultsView.style.display = "none"
-
+    // @ts-ignore
+    notesView.style.display = "none"
     if (this.currentView == 1) {
       console.log("Enabling first view...")
+      this.setRateView()
       // @ts-ignore
-      firstView.style.display = "block"
+      secondView.style.display = "block"
     }else{
       if (this.currentView == 2) {
         console.log("Enabling second view...")
-        this.setRateView()
         // @ts-ignore
-        secondView.style.display = "block"
+        thirdView.style.display = "block"
       }else{
         if (this.currentView == 3) {
           console.log("Enabling third view...")
           // @ts-ignore
-          thirdView.style.display = "block"
+          fourthView.style.display = "block"
         }else{
           if (this.currentView == 4) {
-            console.log("Enabling fourth view...")
-            // @ts-ignore
-            fourthView.style.display = "block"
-          } else {
-            console.log("Enabling results view...")
-            // @ts-ignore
-            resultsView.style.display = "block"
+            if (this.checkBaseFormsInvalid()) {
+              console.log("Forms are invalid")
+              this.changeViewValue(-1)
+            } else {
+              console.log("Enabling fourth view...")
+              // @ts-ignore
+              firstView.style.display = "block"
+            }
+
           }
         }
       }
     }
   }
+
+
 }

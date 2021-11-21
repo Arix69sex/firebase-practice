@@ -57,6 +57,21 @@ export class AppComponent implements OnInit , AfterViewInit{
     location.reload()
   }
 
+  setCurrency() {
+    let select = document.getElementById("currency-options")
+    // @ts-ignore
+    let value = select.options[select.selectedIndex].value;
+    console.log(value)
+    if (value == "0") {
+      console.log("Setting to soles")
+      this.noteService.setToSoles()
+    } else {
+      console.log("Setting to dollars")
+      this.noteService.setToDollars()
+    }
+    location.reload()
+  }
+
   setNavbars() {
     let notLoggedInNavbar = document.getElementById("notLoggedInNavbar");
     let loggedInNavbar = document.getElementById("loggedInNavbar");
@@ -102,7 +117,11 @@ export class AppComponent implements OnInit , AfterViewInit{
     this.router.navigate(['/home/']).then(() => null);
   }
 
-  navigateToHistory(){
-    this.router.navigate(['/history/']).then(() => null);
+  navigateToNotes(){
+    this.router.navigate(['/my-notes/']).then(() => null);
+  }
+
+  navigateToWallet() {
+    this.router.navigate(['/wallet/']).then(() => null);
   }
 }
